@@ -8,7 +8,7 @@
 ## 视频资源
 
 - [B站直播地址](https://live.bilibili.com/21838900) 每周一12：55-15：40，张伟楠老师在ACM班授课
-- [B站回播地址（待添加）]()
+- B站回播地址（待添加）
 - [录播视频-知识点结构](https://www.boyuai.com/elites/course/x3fyYxaRhVWJxGSI)
 
 
