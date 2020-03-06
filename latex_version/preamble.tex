@@ -1,0 +1,169 @@
+\documentclass[UTF8, openany]{ctexbook}
+
+\usepackage[T1]{fontenc}
+\usepackage{textcomp}
+\usepackage{theorem}
+% \usepackage[dutch]{babel}
+\usepackage{amsmath, amssymb}
+\usepackage{import}
+\usepackage{pdfpages}
+\usepackage{transparent}
+\usepackage{xcolor}
+\usepackage{enumerate}
+\usepackage{setspace} 
+
+%\usepackage{ebgaramond}
+%\fontfamily{ebgaramond}
+% ------------- coding style setting --------------%
+
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+	bookmarks=true,
+    pdfpagemode=FullScreen,
+}
+\urlstyle{same}
+
+\usepackage{listings}
+\usepackage{enumitem}
+\setlist{nosep}
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    numbers=left,
+    numbersep=5pt,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=2
+}
+
+\lstset{style=mystyle}
+
+% ----------------- geometry and fancy head -----------
+
+\usepackage{geometry}
+\geometry{left=2.5cm,right=2.5cm,top=3cm,bottom=3cm}
+\usepackage[many]{tcolorbox}
+\tcbuselibrary{skins, breakable, theorems}
+
+\usepackage{fancyhdr}
+\renewcommand{\chaptername}{Lecture}
+
+
+
+\usepackage{syntonly} % dubugging
+% \syntaxonly
+\fancypagestyle{mainFancy}{
+    \fancyhf{}
+    %\renewcommand\headrulewidth{0pt}       % 页眉横线
+    %\renewcommand\footrulewidth{0pt}
+    
+    \fancyhead[L]{Machine Learning}       % 页眉章标题
+    \fancyhead[R]{Lecture Notes}         % 页眉文章题目
+    \fancyfoot[C]{\thepage}                 % 页眉编号
+}
+\pagestyle{mainFancy}
+
+
+% --------------- environment setting ------------------
+
+\newtheorem{thm}{Theorem}
+\newtheorem{pro}{Problem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{defi}{Definition}
+\newtheorem{li}{Example}
+\newenvironment{proof}{\paragraph{Proof:}}{\hfill$\square$}
+\newenvironment{jie}{\paragraph{Show:}}{\hfill$\square$}
+
+\numberwithin{pro}{section}
+\numberwithin{thm}{section}
+\numberwithin{defi}{section}
+\numberwithin{lemma}{section}
+
+
+\tcolorboxenvironment{pro}{
+  enhanced,
+  borderline={0.4pt}{0.4pt}{black},
+  boxrule=0.4pt,
+  colback=white,
+  coltitle=black,
+  sharp corners,
+}
+\tcolorboxenvironment{thm}{
+  enhanced,
+  borderline={0.4pt}{0.4pt}{black},
+  boxrule=0.4pt,
+  colback=white,
+  coltitle=black,
+  sharp corners,
+}
+\tcolorboxenvironment{lemma}{
+  enhanced,
+  borderline={0.4pt}{0.4pt}{black},
+  boxrule=0.4pt,
+  colback=white,
+  coltitle=black,
+  sharp corners,
+}
+\tcolorboxenvironment{defi}{
+  enhanced,
+  borderline={0.4pt}{0.4pt}{black},
+  boxrule=0.4pt,
+  colback=white,
+  coltitle=black,
+  sharp corners,
+}
+
+% ----------------- macros and command -----------------
+\usepackage{stmaryrd} 
+\newcommand\contra{\scalebox{1.5}{$\lightning$}}
+\definecolor{correct}{HTML}{009900}
+\newcommand\correct[2]{\ensuremath{\:}{\color{red}{#1}}\ensuremath{\to }{\color{correct}{#2}}\ensuremath{\:}}
+\newcommand\green[1]{{\color{correct}{#1}}}
+
+% horizontal rule
+\newcommand\hr{
+		    \noindent\rule[0.5ex]{\linewidth}{0.5pt}
+	}
+\def\mf(#1){\mathfrak{#1}} 
+\def\setn(#1,#2){\left\{#1_1,#1_2,\cdots, #1_#2 \right\}  }
+\newcommand{\incfig}[2][1]{%
+    \def\svgwidth{#1\columnwidth}
+    \import{./figures/}{#2.pdf_tex}
+}
+
+\let\implies\Rightarrow
+\let\impliedby\Leftarrow
+\let\iff\Leftrightarrow
+\let\ldots\cdots
+
+
+\newcommand\dif{\,\mathrm{d}}
+\newcommand\e{\,\mathrm{e}}
+\newcommand\R{\,\mathbb{R}}
+\newcommand\Q{\,\mathbb{Q}}
+\newcommand\N{\,\mathbb{N}}
+\newcommand\A{\,\mathbb{A}}
+\newcommand\Z{\,\mathbb{Z}}
+\newcommand\ep{\,\varepsilon}
+\newcommand\F{\,\varphi}
+\newcommand\T{\,\mathbb{T}}
+\newcommand\HH{\,\mathbb{H}}
+\author{yujie6@sjtu.edu.cn\footnote{Yujie Lu, ACM class 18, ID is 518030910111}}
