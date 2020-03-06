@@ -33,3 +33,6 @@
 - 新内容请在现有笔记基础上添加，如有必要可以调整结构
 - 请为笔记内容的更新创建一个Pull Request
 - 请保证笔记的质量，若半数管理员同意添加，则PR会被合并
+
+## Latex版本
+感谢 [@yujie6](https://github.com/yujie6) 提供Latex版本笔记 [note.pdf](latex_version/notes/note.pdf)，使用`xelatex`编译
