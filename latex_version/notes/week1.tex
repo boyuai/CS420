@@ -1,0 +1,122 @@
+
+\chapter{Lecture 1 (Mar 2)}
+\section{人工智能简介}
+\subsection{什么是人工智能}
+智能是实现世界目标的计算能力部分。
+
+人工智能探讨对机器进行设计的方法论使得其可以去完成\textbf{基于智能的任务}。
+\subsection{人工智能方法}
+\noindent \textbf{基于规则的方法}
+\begin{itemize}
+		\item 直接编程实现
+		\item 借鉴人类启发式学习
+\end{itemize}
+
+\noindent \textbf{基于数据的方法}
+\begin{itemize}
+		\item 专家系统：基于数据创造决策的规则
+		\item 机器学习：基于数据进行预测或决策
+\end{itemize}
+\section{机器学习简介}
+\subsection{机器学习定义}
+\begin{quotation}
+		学习是\textbf{系统} 通过\textbf{经验}提升性能的过程。
+\end{quotation}
+\begin{defi}[Tom Mitchell]
+		机器学习是一门研究学习算法的学科，这些算法(非显式编程)能在某些任务$T$ 上通过经验$E$ 来提升性能$P$。
+\end{defi}
+
+\noindent 机器学习分类
+\begin{itemize}
+		\item 预测
+				\begin{itemize}
+						\item 监督学习
+						\item 无监督学习
+				\end{itemize}
+		\item 决策
+				\begin{itemize}
+						\item 在动态环境中采取行动（强化学习）
+				\end{itemize}
+\end{itemize}
+
+\subsection{机器学习应用}
+\noindent \textbf{预测}
+\begin{itemize}
+		\item 网页搜索（根据profile分析）
+		\item 人脸识别（Computer vision）
+		\item 推荐系统
+		\item 在线广告
+		\item 信息提取
+\end{itemize}
+\noindent \textbf{决策}
+\begin{itemize}
+		\item 交互式内容推荐
+		\item 机器人控制
+		\item 自动驾驶
+		\item 游戏智能		
+		\item 多智能体协作
+\end{itemize}
+
+\subsection{机器学习基本思想}
+	以监督学习为例，给定带label的数据集
+	 \[
+			 D = \{\left( x_{i},y_{i} \right) \}_{i=1,2,\ldots N} 
+	.\] 
+	寻找$\theta=\left( a,b,c,\ldots \right) $ 使得函数映射
+	\[
+			y_{i} \approx f_{\theta} \left( x_{i} \right) 
+	.\] 
+	我们用loss function 
+	\[ 
+			\mathcal{L}\left( y_{i},f_{\theta}\left( x_{i} \right)  \right) =\frac{1}{2}\left( y_{i}-f_{\theta}\left( x_{i} \right)  \right)^2  
+	\]
+	来衡量预测的误差
+	\[
+			\mathcal{L}\left( \theta \right)  = 
+			\frac{1}{n} \sum_{i=1}^{n} \mathcal{L}\left( y_{i},f_{\theta}\left( x_{i} \right)  \right) 
+	.\] 
+	通过梯度下降求得$ \mathrm{min}_{\theta}  \mathcal{L}\left( \theta \right) $
+
+	\subsubsection{模型选择}
+	模型选得不好会导致\textbf{欠拟合}或\textbf{过拟合}。为了防止这两种情况，我们可以采用
+	
+\noindent \textbf{正则化}
+
+	添加$\theta$的惩罚项$\Omega\left( \theta \right)$， 一般选择L2正则化$\lambda \|\theta\|^2_{2}$（也称玲回归Ridge）。
+	当我们增加参数$\theta_n$时，我们实际上是在学习前面的参数产生的\textbf{残差}
+
+	这样做的另一个解释是奥卡姆剃刀原则（Occam’s Razor） ，
+	这个原则是说能用简单的方法完成任务的就尽量不要复杂，
+	在这里就是能用简单的模型去拟合就不用复杂的能把噪声都刻画出来的方法。
+
+\begin{figure}[ht]
+    \centering
+	\incfig[0.7]{ridge}
+    \caption{Ridge}
+    \label{fig:ridge}
+\end{figure}
+	有时候也会选择$q\le 1$进行稀疏性学习。
+
+	一个机器学习的解决方案的模型包含参数$\theta$与超参数 $\lambda$。
+	\begin{defi}
+			超参数为需要预先定义，无法直接从数据学习的参数。
+	\end{defi}
+
+
+\noindent \textbf{交叉验证}
+
+K-fold, 将训练集分成$k$ 份。
+
+\noindent \textbf{泛化能力}
+\begin{defi}
+泛化能力(generalization ability)指对未训练数据的预测能力。
+\end{defi}
+为了描述这种能力我们引入泛化误差(\href{https://en.wikipedia.org/wiki/Generalization_error}{Generalization Error}): 
+\[
+		R\left( f \right) =\int _{X\times Y} \mathcal{L}\left( y,f(x) \right) p\left( x,y \right) \dif x\dif y
+.\] 
+其中$p(x,y)$ 是潜在的联合数据分布(\href{https://en.wikipedia.org/wiki/Joint_probability_distribution}{joint probability distribution})。
+在已有数据集上也可进行经验估计：
+\[
+		\hat{R} \left( f \right) =\frac{1}{N} \sum_{i=1}^{n} \mathcal{L}_{i}
+.\] 

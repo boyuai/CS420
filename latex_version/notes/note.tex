@@ -4,125 +4,164 @@
 \begin{document}
 \maketitle
 \tableofcontents
-\chapter{Lecture 1 (Mar 2)}
-\section{人工智能简介}
-\subsection{什么是人工智能}
-智能是实现世界目标的计算能力部分。
 
-人工智能探讨对机器进行设计的方法论使得其可以去完成\textbf{基于智能的任务}。
-\subsection{人工智能方法}
-\noindent \textbf{基于规则的方法}
+\input{week1}
+\chapter{March 9}
+\section{判别模型和生成模型}
 \begin{itemize}
-		\item 直接编程实现
-		\item 借鉴人类启发式学习
-\end{itemize}
-
-\noindent \textbf{基于数据的方法}
-\begin{itemize}
-		\item 专家系统：基于数据创造决策的规则
-		\item 机器学习：基于数据进行预测或决策
-\end{itemize}
-\section{机器学习简介}
-\subsection{机器学习定义}
-\begin{quotation}
-		学习是\textbf{系统} 通过\textbf{经验}提升性能的过程。
-\end{quotation}
-\begin{defi}[Tom Mitchell]
-		机器学习是一门研究学习算法的学科，这些算法(非显式编程)能在某些任务$T$ 上通过经验$E$ 来提升性能$P$。
-\end{defi}
-
-\noindent 机器学习分类
-\begin{itemize}
-		\item 预测
+		\item 判别模型
 				\begin{itemize}
-						\item 监督学习
-						\item 无监督学习
+						\item 确定性判别：$y=f_{\theta}\left( x \right) $
+						\item 随机判别：$p_{\theta}\left( y \mid x \right) $
 				\end{itemize}
-		\item 决策
-				\begin{itemize}
-						\item 在动态环境中采取行动（强化学习）
-				\end{itemize}
+		\item 生成模型：建立联合概率分布（一般不用）
+				\[
+						p_{\theta}\left( y \mid x \right) = \frac{p_{\theta}\left( x,y \right)}{p_{\theta}\left( x \right)  }
+				.\] 
 \end{itemize}
 
-\subsection{机器学习应用}
-\noindent \textbf{预测}
+\subsection{生成模型}
 \begin{itemize}
-		\item 网页搜索（根据profile分析）
-		\item 人脸识别（Computer vision）
-		\item 推荐系统
-		\item 在线广告
-		\item 信息提取
+		\item 频率派，$\theta$ 是具体的一个点，易于计算
+		\item 贝叶斯派，$\theta$ 是一个分布
 \end{itemize}
-\noindent \textbf{决策}
+
+
+\section{线性回归}
+一维的线性回归和二次回归都是线性模型：比如
+\[
+		f\left( x \right) =\theta_0+\theta_1x+\theta_2 x^2 = \theta^{T} \phi\left( x \right) 
+.\] 
+$\phi$ 实际上是一种feature engineering。
+
+
+\noindent \textbf{学习目标} 
+\[
+		\mathcal{L}\left( \theta \right)  = 
+		\frac{1}{n} \sum_{i=1}^{n} \mathcal{L}\left( y_{i},f_{\theta}\left( x_{i} \right)  \right) 
+.\] 
+损失函数选择：min square loss
+
+\noindent \textbf{学习方法}
+
+梯度下降
+\[
+		\theta_{new} \leftarrow \theta_{old} - \eta \frac{\partial \mathcal{L}\left( \theta \right) }{\partial \theta} 
+.\] 
+
+\section{梯度下降}
+\subsection{批量梯度下降}
+根据整个批量数据的梯度更新数据
+\[
+		\frac{\partial J\left( \theta \right) }{\partial \theta} =
+		-\frac{1}{N} \sum_{i=1}^{N} \left( y_{i}-f_{\theta}\left( x_{i} \right)  \right) x_{i}
+.\] 
+
+\subsection{随机梯度下降}
+\href{https://en.wikipedia.org/wiki/Stochastic_gradient_descent}{Stochastic Gradient Descent} 
+在数据量较大时比批量梯度下降更为优秀。但是学习中存在\textbf{震荡}或不确定性。 
+
+\noindent \textbf{优化目标}
+\[
+		J^{(i)} \left( \theta \right) = \frac{1}{2} \left( y_{i}-f_{\theta}\left( x_{i} \right)   \right) ^2 
+.\] 
+\subsection{小批量梯度下降}
+前面两种方式的结合，将训练集分为$K$ 个mini-batch。对每一个小批量更新参数
+\[
+		J^{(k)}\left( \theta \right)  = \frac{1}{2N_{k}} \sum_{i=1}^{N_k} \left( y_i-f_{\theta}\left( x_{i} \right)  \right) ^2
+.\] 
+\noindent \textbf{优点}
 \begin{itemize}
-		\item 交互式内容推荐
-		\item 机器人控制
-		\item 自动驾驶
-		\item 游戏智能		
-		\item 多智能体协作
+		\item 结合map-reduce可以比较容易实现并行
+		\item 更新速度快，不确定性低
 \end{itemize}
 
-\subsection{机器学习基本思想}
-	以监督学习为例，给定带label的数据集
-	 \[
-			 D = \{\left( x_{i},y_{i} \right) \}_{i=1,2,\ldots N} 
-	.\] 
-	寻找$\theta=\left( a,b,c,\ldots \right) $ 使得函数映射
-	\[
-			y_{i} \approx f_{\theta} \left( x_{i} \right) 
-	.\] 
-	我们用loss function 
-	\[ 
-			\mathcal{L}\left( y_{i},f_{\theta}\left( x_{i} \right)  \right) =\frac{1}{2}\left( y_{i}-f_{\theta}\left( x_{i} \right)  \right)^2  
-	\]
-	来衡量预测的误差
-	\[
-			\mathcal{L}\left( \theta \right)  = 
-			\frac{1}{n} \sum_{i=1}^{n} \mathcal{L}\left( y_{i},f_{\theta}\left( x_{i} \right)  \right) 
-	.\] 
-	通过梯度下降求得$ \mathrm{min}_{\theta}  \mathcal{L}\left( \theta \right) $
+\subsection{基本搜索步骤}
+随机选择初始化参数，走到局部最优值。
 
-	\subsubsection{模型选择}
-	模型选得不好会导致\textbf{欠拟合}或\textbf{过拟合}。为了防止这两种情况，我们可以采用
-	
-\noindent \textbf{正则化}
-
-	添加$\theta$的惩罚项$\Omega\left( \theta \right)$， 一般选择L2正则化$\lambda \|\theta\|^2_{2}$（也称玲回归Ridge）。
-	当我们增加参数$\theta_n$时，我们实际上是在学习前面的参数产生的\textbf{残差}
-
-	这样做的另一个解释是奥卡姆剃刀原则（Occam’s Razor） ，
-	这个原则是说能用简单的方法完成任务的就尽量不要复杂，
-	在这里就是能用简单的模型去拟合就不用复杂的能把噪声都刻画出来的方法。
-
-\begin{figure}[ht]
-    \centering
-	\incfig[0.7]{ridge}
-    \caption{Ridge}
-    \label{fig:ridge}
-\end{figure}
-	有时候也会选择$q\le 1$进行稀疏性学习。
-
-	一个机器学习的解决方案的模型包含参数$\theta$与超参数 $\lambda$。
-	\begin{defi}
-			超参数为需要预先定义，无法直接从数据学习的参数。
-	\end{defi}
-
-
-\noindent \textbf{交叉验证}
-
-K-fold, 将训练集分成$k$ 份。
-
-\noindent \textbf{泛化能力}
 \begin{defi}
-泛化能力(generalization ability)指对未训练数据的预测能力。
+		$f:\R^{n}\to \R$ 是凸函数：$\mathrm{dom} f$\footnote{dom 指函数定义域} 是一个凸集，并且
+		\[
+				f\left( tx_1+\left( 1-t \right) x_2 \right) \le  tf\left( x_1 \right) 
+				+ \left( 1-t \right) f\left( x_2 \right) 
+		.\] 
 \end{defi}
-为了描述这种能力我们引入泛化误差(\href{https://en.wikipedia.org/wiki/Generalization_error}{Generalization Error}): 
+而凸函数是一定有最值的。
+
+\section{从代数角度看线性回归}
+\noindent \textbf{目标函数} 
 \[
-		R\left( f \right) =\int _{X\times Y} \mathcal{L}\left( y,f(x) \right) p\left( x,y \right) \dif x\dif y
-.\] 
-其中$p(x,y)$ 是潜在的联合数据分布(\href{https://en.wikipedia.org/wiki/Joint_probability_distribution}{joint probability distribution})。
-在已有数据集上也可进行经验估计：
+		J\left( \bm{\mu}  \right) = \frac{1}{2} \left( \bm{y} - \bm{X\mu} \right)^{T} 
+ \left( \bm{y} - \bm{X\mu} \right)
+.\]
+而梯度为
 \[
-		\hat{R} \left( f \right) =\frac{1}{N} \sum_{i=1}^{n} \mathcal{L}_{i}
+		\frac{\partial J(\bm{\mu} )}{\partial \mu} 
+		= - \bm{X}^{T} \left( \bm{y}-\bm{X\mu} \right) 
 .\] 
+甚至可以直接求出最优参数
+\[
+		\frac{\partial J(\bm{\mu} )}{\partial \mu} = 0 \implies \hat{\mu} = \left( \bm{X^{T}X} \right) ^{-1} \bm{X}^{T} \bm{y}
+.\] 
+但是当$\bm{X}$ 很大时，这是很难计算的。
+
+\noindent \textbf{当$\bm{X^{T}X}$ 为奇异矩阵 }
+
+其逆矩阵无法计算，解决方法
+\begin{itemize}
+		\item Regulariazation
+		\item $J_1\left( \mu \right)  = J\left( \mu \right) + \frac{\lambda}{2} \|\mu\|^2_{2}  $
+\end{itemize}
+从而
+\[
+		\hat{\mu}=  \left( \bm{X^{T}X } + \lambda \bm{I} \right) ^{-1} \bm{X^{T} y}
+.\] 
+\subsection{泛线性模型}
+本质上是做一个替换$ \bm x\to \phi\left( \bm x \right) $，
+$\phi\left( x \right) $ 是$\R^{d}\to\R^{h}$
+的向量函数。加入了$\phi$ 的线性回归也叫核线性回归。
+
+\subsection{核线性回归的矩阵形式}
+使用\href{https://zhuanlan.zhihu.com/p/45223109}{线性代数技巧}得到：
+\[
+		\hat{y} = \Phi \hat{\theta} = \Phi\Phi^{T} \left( \Phi\Phi^{T} + \lambda I_{n} \right) ^{-1} y 
+.\]  
+只需关心核矩阵
+\[
+		K = \Phi\Phi^{T} = \{ k\left( x^{(i)}, x^{(j)} \right) \} 
+.\] 
+
+\section{最大似然估计}
+
+带高斯白噪声的线性拟合：
+\[
+		y = f_{\theta} \left( x \right)  + \ep
+.\] 
+其中$\ep \sim \mathcal{N} \left( 0, \sigma^2 \right) $.
+
+\noindent \textbf{优化目标}
+
+最大似然(Likelyhood). 
+\[
+		p\left( y \mid x \right) =\frac{1}{\sqrt{2\pi \sigma^2} } e^{- \frac{\ep^2}{2\sigma^2}   }= \frac{1}{\sqrt{2\pi \sigma^2} } e^{- \frac{y-\theta^{T}x }{2\sigma^2}   }
+.\] 
+最大化这个似然
+\[
+		\mathrm{max}_{\theta} \prod_{i=1}^{N} p\left( y_{i}  \mid  x_{i} \right)  
+.\] 
+等价于最小均方误差的学习(取对数即可证明)
+
+\section{分类指标}
+分类器有以下几个指标：
+\begin{align*}
+		\mathrm{Accuracy}  &= \frac{TP + TN}{TP + FP + TN + FN} \\
+		\mathrm{Precision}  &=  \frac{TP}{TP+FP} \\
+		\mathrm{Recall}  &=  \frac{TP}{TP+FN} 
+.\end{align*} 
+为了判别分类器好不好，我们有F1 score
+\[
+F_1 = \frac{2 \times \mathrm{Precision} \times \mathrm{Recall}  }{ \mathrm{Precision} + \mathrm{Recall}  }
+.\] 
+
 \end{document}
+
