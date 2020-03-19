@@ -1,0 +1,171 @@
+
+\chapter{March 9}
+\section{判别模型和生成模型}
+\begin{itemize}
+		\item 判别模型
+				\begin{itemize}
+						\item 确定性判别：$y=f_{\theta}\left( x \right) $
+						\item 随机判别：$p_{\theta}\left( y \mid x \right) $
+				\end{itemize}
+		\item 生成模型：建立联合概率分布（一般不用）
+				\[
+						p_{\theta}\left( y \mid x \right) = \frac{p_{\theta}\left( x,y \right)}{p_{\theta}\left( x \right)  }
+				.\] 
+\end{itemize}
+
+\subsection{生成模型}
+\begin{itemize}
+		\item 频率派，$\theta$ 是具体的一个点，易于计算
+		\item 贝叶斯派，$\theta$ 是一个分布
+\end{itemize}
+
+
+\section{线性回归}
+一维的线性回归和二次回归都是线性模型：比如
+\[
+		f\left( x \right) =\theta_0+\theta_1x+\theta_2 x^2 = \theta^{T} \phi\left( x \right) 
+.\] 
+$\phi$ 实际上是一种feature engineering。
+
+
+\noindent \textbf{学习目标} 
+\[
+		\mathcal{L}\left( \theta \right)  = 
+		\frac{1}{n} \sum_{i=1}^{n} \mathcal{L}\left( y_{i},f_{\theta}\left( x_{i} \right)  \right) 
+.\] 
+损失函数选择：min square loss
+
+\noindent \textbf{学习方法}
+
+梯度下降
+\[
+		\theta_{new} \leftarrow \theta_{old} - \eta \frac{\partial \mathcal{L}\left( \theta \right) }{\partial \theta} 
+.\] 
+
+\section{梯度下降}
+\subsection{批量梯度下降}
+根据整个批量数据的梯度更新数据
+\[
+		\frac{\partial J\left( \theta \right) }{\partial \theta} =
+		-\frac{1}{N} \sum_{i=1}^{N} \left( y_{i}-f_{\theta}\left( x_{i} \right)  \right) x_{i}
+.\] 
+
+\subsection{随机梯度下降}
+\href{https://en.wikipedia.org/wiki/Stochastic_gradient_descent}{Stochastic Gradient Descent} 
+在数据量较大时比批量梯度下降更为优秀。但是学习中存在\textbf{震荡}或不确定性。 
+
+\noindent \textbf{优化目标}
+\[
+		J^{(i)} \left( \theta \right) = \frac{1}{2} \left( y_{i}-f_{\theta}\left( x_{i} \right)   \right) ^2 
+.\] 
+\subsection{小批量梯度下降}
+前面两种方式的结合，将训练集分为$K$ 个mini-batch。对每一个小批量更新参数
+\[
+		J^{(k)}\left( \theta \right)  = \frac{1}{2N_{k}} \sum_{i=1}^{N_k} \left( y_i-f_{\theta}\left( x_{i} \right)  \right) ^2
+.\] 
+\noindent \textbf{优点}
+\begin{itemize}
+		\item 结合map-reduce可以比较容易实现并行
+		\item 更新速度快，不确定性低
+\end{itemize}
+
+\subsection{基本搜索步骤}
+随机选择初始化参数，走到局部最优值。
+
+\begin{defi}
+		$f:\R^{n}\to \R$ 是凸函数：$\mathrm{dom} f$\footnote{dom 指函数定义域} 是一个凸集，并且
+		\[
+				f\left( tx_1+\left( 1-t \right) x_2 \right) \le  tf\left( x_1 \right) 
+				+ \left( 1-t \right) f\left( x_2 \right) 
+		.\] 
+\end{defi}
+而凸函数是一定有最值的。
+
+\section{从代数角度看线性回归}
+\noindent \textbf{目标函数} 
+\[
+		J\left( \bm{\mu}  \right) = \frac{1}{2} \left( \bm{y} - \bm{X\mu} \right)^{T} 
+ \left( \bm{y} - \bm{X\mu} \right)
+.\]
+而梯度为
+\[
+		\frac{\partial J(\bm{\mu} )}{\partial \mu} 
+		= - \bm{X}^{T} \left( \bm{y}-\bm{X\mu} \right) 
+.\] 
+甚至可以直接求出最优参数
+\[
+		\frac{\partial J(\bm{\mu} )}{\partial \mu} = 0 \implies \hat{\mu} = \left( \bm{X^{T}X} \right) ^{-1} \bm{X}^{T} \bm{y}
+.\] 
+但是当$\bm{X}$ 很大时，这是很难计算的。
+
+\noindent \textbf{当$\bm{X^{T}X}$ 为奇异矩阵 }
+
+其逆矩阵无法计算，解决方法
+\begin{itemize}
+		\item Regulariazation
+		\item $J_1\left( \mu \right)  = J\left( \mu \right) + \frac{\lambda}{2} \|\mu\|^2_{2}  $
+\end{itemize}
+从而
+\[
+		\hat{\mu}=  \left( \bm{X^{T}X } + \lambda \bm{I} \right) ^{-1} \bm{X^{T} y}
+.\] 
+\subsection{泛线性模型}
+本质上是做一个替换$ \bm x\to \phi\left( \bm x \right) $，
+$\phi\left( x \right) $ 是$\R^{d}\to\R^{h}$
+的向量函数。加入了$\phi$ 的线性回归也叫核线性回归。
+
+\subsection{核线性回归的矩阵形式}
+使用\href{https://zhuanlan.zhihu.com/p/45223109}{线性代数技巧}得到：
+\[
+		\hat{y} = \Phi \hat{\theta} = \Phi\Phi^{T} \left( \Phi\Phi^{T} + \lambda I_{n} \right) ^{-1} y 
+.\]  
+只需关心核矩阵
+\[
+		K = \Phi\Phi^{T} = \{ k\left( x^{(i)}, x^{(j)} \right) \} 
+.\] 
+
+\section{最大似然估计}
+
+带高斯白噪声的线性拟合：
+\[
+		y = f_{\theta} \left( x \right)  + \ep
+.\] 
+其中$\ep \sim \mathcal{N} \left( 0, \sigma^2 \right) $.
+
+\noindent \textbf{优化目标}
+
+最大似然(Likelyhood). 
+\[
+		p\left( y \mid x \right) =\frac{1}{\sqrt{2\pi \sigma^2} } e^{- \frac{\ep^2}{2\sigma^2}   }= \frac{1}{\sqrt{2\pi \sigma^2} } e^{- \frac{y-\theta^{T}x }{2\sigma^2}   }
+.\] 
+最大化这个似然
+\[
+		\mathrm{max}_{\theta} \prod_{i=1}^{N} p\left( y_{i}  \mid  x_{i} \right)  
+.\] 
+等价于最小均方误差的学习(取对数即可证明)
+
+\section{分类指标}
+分类器有以下几个指标：
+\begin{align*}
+		\mathrm{Accuracy}  &= \frac{TP + TN}{TP + FP + TN + FN} \\
+		\mathrm{Precision}  &=  \frac{TP}{TP+FP} \\
+		\mathrm{Recall}  &=  \frac{TP}{TP+FN} 
+.\end{align*} 
+为了权衡准确率和召回率，可以调整阀值$h$：
+\[
+\hat{y} = \begin{cases}
+		1, \quad p_{\theta}\left( y=1 \mid x \right) > h \\
+		0, \quad \text{else}
+\end{cases}
+.\] 
+
+为了判别分类器好不好，我们有F1 score
+\[
+F_1 = \frac{2 \times \mathrm{Precision} \times \mathrm{Recall}  }{ \mathrm{Precision} + \mathrm{Recall}  }
+.\] 
+
+\subsection{ROC 曲线}
+当$h$ 不断提升时，可以做出一条$\frac{TP}{P} \sim \frac{FP}{N}$曲线(
+Receiver operating characteristic).
+AUC\footnote{一般处于$\left( 0.5,1 \right) $} (Area under ROC curve) 可以用来衡量准确率
+，处于$0.75$以上时可以认为分类模型比较可靠。

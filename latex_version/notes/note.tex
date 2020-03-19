@@ -6,161 +6,177 @@
 \tableofcontents
 
 \input{week1}
-\chapter{March 9}
-\section{判别模型和生成模型}
-\begin{itemize}
-		\item 判别模型
-				\begin{itemize}
-						\item 确定性判别：$y=f_{\theta}\left( x \right) $
-						\item 随机判别：$p_{\theta}\left( y \mid x \right) $
-				\end{itemize}
-		\item 生成模型：建立联合概率分布（一般不用）
-				\[
-						p_{\theta}\left( y \mid x \right) = \frac{p_{\theta}\left( x,y \right)}{p_{\theta}\left( x \right)  }
-				.\] 
-\end{itemize}
-
-\subsection{生成模型}
-\begin{itemize}
-		\item 频率派，$\theta$ 是具体的一个点，易于计算
-		\item 贝叶斯派，$\theta$ 是一个分布
-\end{itemize}
-
-
-\section{线性回归}
-一维的线性回归和二次回归都是线性模型：比如
+\input{week2}
+\chapter{March 16}
+\section{逻辑回归} 
+概率判别模型在分类时往往更加可靠，因为如果用函数的话就无法求导了。
+\subsection{二分类}
+\noindent \textbf{损失函数}
+用交叉熵来衡量
 \[
-		f\left( x \right) =\theta_0+\theta_1x+\theta_2 x^2 = \theta^{T} \phi\left( x \right) 
+		\mathcal{L}\left( y,x \right)  = -\sum_{k} \delta\left( y=c_{k} \right) \log p_{\theta}\left( y=c_k \mid x \right) 
 .\] 
-$\phi$ 实际上是一种feature engineering。
-
-
-\noindent \textbf{学习目标} 
+其中
 \[
-		\mathcal{L}\left( \theta \right)  = 
-		\frac{1}{n} \sum_{i=1}^{n} \mathcal{L}\left( y_{i},f_{\theta}\left( x_{i} \right)  \right) 
-.\] 
-损失函数选择：min square loss
-
-\noindent \textbf{学习方法}
-
-梯度下降
-\[
-		\theta_{new} \leftarrow \theta_{old} - \eta \frac{\partial \mathcal{L}\left( \theta \right) }{\partial \theta} 
+		\delta\left( z \right)  = \begin{cases}
+				1, \quad z \text{ is true} \\
+				0, \quad z \text{ else}
+		\end{cases}
 .\] 
 
-\section{梯度下降}
-\subsection{批量梯度下降}
-根据整个批量数据的梯度更新数据
+为了输出一个$\left( 0,1 \right) $ 之间的值，我们会给$z=\theta^{T}x$套上一个sigmoid函数
 \[
-		\frac{\partial J\left( \theta \right) }{\partial \theta} =
-		-\frac{1}{N} \sum_{i=1}^{N} \left( y_{i}-f_{\theta}\left( x_{i} \right)  \right) x_{i}
+		\sigma\left( z \right)  = \frac{1}{1+\exp\left( -z \right) }
 .\] 
-
-\subsection{随机梯度下降}
-\href{https://en.wikipedia.org/wiki/Stochastic_gradient_descent}{Stochastic Gradient Descent} 
-在数据量较大时比批量梯度下降更为优秀。但是学习中存在\textbf{震荡}或不确定性。 
-
-\noindent \textbf{优化目标}
+即
 \[
-		J^{(i)} \left( \theta \right) = \frac{1}{2} \left( y_{i}-f_{\theta}\left( x_{i} \right)   \right) ^2 
+		p\left( y=1 \mid x \right) =\sigma\left( z \right), \quad p\left( y=0 \mid x \right) = 1-\sigma\left( z \right) 
 .\] 
-\subsection{小批量梯度下降}
-前面两种方式的结合，将训练集分为$K$ 个mini-batch。对每一个小批量更新参数
+带入损失函数有
 \[
-		J^{(k)}\left( \theta \right)  = \frac{1}{2N_{k}} \sum_{i=1}^{N_k} \left( y_i-f_{\theta}\left( x_{i} \right)  \right) ^2
+		\mathcal{L}\left( y,x \right)  = -y\log \sigma\left( z \right)  - \left( 1-y \right) \log\left( 1-\sigma\left( z \right)  \right) 
 .\] 
-\noindent \textbf{优点}
-\begin{itemize}
-		\item 结合map-reduce可以比较容易实现并行
-		\item 更新速度快，不确定性低
-\end{itemize}
-
-\subsection{基本搜索步骤}
-随机选择初始化参数，走到局部最优值。
-
-\begin{defi}
-		$f:\R^{n}\to \R$ 是凸函数：$\mathrm{dom} f$\footnote{dom 指函数定义域} 是一个凸集，并且
-		\[
-				f\left( tx_1+\left( 1-t \right) x_2 \right) \le  tf\left( x_1 \right) 
-				+ \left( 1-t \right) f\left( x_2 \right) 
-		.\] 
-\end{defi}
-而凸函数是一定有最值的。
-
-\section{从代数角度看线性回归}
-\noindent \textbf{目标函数} 
+有趣的是，$\sigma$ 求导后
 \[
-		J\left( \bm{\mu}  \right) = \frac{1}{2} \left( \bm{y} - \bm{X\mu} \right)^{T} 
- \left( \bm{y} - \bm{X\mu} \right)
-.\]
-而梯度为
-\[
-		\frac{\partial J(\bm{\mu} )}{\partial \mu} 
-		= - \bm{X}^{T} \left( \bm{y}-\bm{X\mu} \right) 
+		\frac{\partial \sigma\left( z \right) }{\partial z} = \sigma\left( z \right) \left( 1-\sigma\left( z \right)  \right) 
 .\] 
-甚至可以直接求出最优参数
+从而梯度为
 \[
-		\frac{\partial J(\bm{\mu} )}{\partial \mu} = 0 \implies \hat{\mu} = \left( \bm{X^{T}X} \right) ^{-1} \bm{X}^{T} \bm{y}
+		\frac{\partial \mathcal{L}\left( y,x \right) }{\partial \theta}  = \left( \sigma\left( z \right) -y \right) x
 .\] 
-但是当$\bm{X}$ 很大时，这是很难计算的。
-
-\noindent \textbf{当$\bm{X^{T}X}$ 为奇异矩阵 }
-
-其逆矩阵无法计算，解决方法
-\begin{itemize}
-		\item Regulariazation
-		\item $J_1\left( \mu \right)  = J\left( \mu \right) + \frac{\lambda}{2} \|\mu\|^2_{2}  $
-\end{itemize}
-从而
+可以看到，梯度形式与线性回归十分相似。
+\subsection{多分类}
+与二分类同样的，只是引入一个类别集
 \[
-		\hat{\mu}=  \left( \bm{X^{T}X } + \lambda \bm{I} \right) ^{-1} \bm{X^{T} y}
+C = \{c_1,c_2,\ldots,c_{n}\} 
 .\] 
-\subsection{泛线性模型}
-本质上是做一个替换$ \bm x\to \phi\left( \bm x \right) $，
-$\phi\left( x \right) $ 是$\R^{d}\to\R^{h}$
-的向量函数。加入了$\phi$ 的线性回归也叫核线性回归。
-
-\subsection{核线性回归的矩阵形式}
-使用\href{https://zhuanlan.zhihu.com/p/45223109}{线性代数技巧}得到：
+使用softmax
 \[
-		\hat{y} = \Phi \hat{\theta} = \Phi\Phi^{T} \left( \Phi\Phi^{T} + \lambda I_{n} \right) ^{-1} y 
-.\]  
-只需关心核矩阵
-\[
-		K = \Phi\Phi^{T} = \{ k\left( x^{(i)}, x^{(j)} \right) \} 
+		p_{\theta}\left( x=c_{j}  \mid  x \right)  = \frac{\exp\left( \theta_{j}^{T}x \right) }{\sum_{i=1}^{m} \exp\left( \theta_{i^{T}x} \right) }
 .\] 
+参数$\theta = \{\theta_{1},\ldots,\theta_{m}\} $, 可以同时除掉$\theta_{1}$ 来减少一个参数。
 
-\section{最大似然估计}
-
-带高斯白噪声的线性拟合：
+其实可以看成$m$ 个二分类，目标
 \[
-		y = f_{\theta} \left( x \right)  + \ep
+		\mathrm{max} \log p_{\theta}\left( y=c_{j} \mid x \right) 
 .\] 
-其中$\ep \sim \mathcal{N} \left( 0, \sigma^2 \right) $.
-
-\noindent \textbf{优化目标}
-
-最大似然(Likelyhood). 
-\[
-		p\left( y \mid x \right) =\frac{1}{\sqrt{2\pi \sigma^2} } e^{- \frac{\ep^2}{2\sigma^2}   }= \frac{1}{\sqrt{2\pi \sigma^2} } e^{- \frac{y-\theta^{T}x }{2\sigma^2}   }
-.\] 
-最大化这个似然
-\[
-		\mathrm{max}_{\theta} \prod_{i=1}^{N} p\left( y_{i}  \mid  x_{i} \right)  
-.\] 
-等价于最小均方误差的学习(取对数即可证明)
-
-\section{分类指标}
-分类器有以下几个指标：
+求梯度有
 \begin{align*}
-		\mathrm{Accuracy}  &= \frac{TP + TN}{TP + FP + TN + FN} \\
-		\mathrm{Precision}  &=  \frac{TP}{TP+FP} \\
-		\mathrm{Recall}  &=  \frac{TP}{TP+FN} 
+		\frac{\partial \log p_{\theta}}{\partial \theta_{j}} 
+		&= x - p_{\theta}x  \\
+		&= \left( 1-p_{\theta}\left( y=c_j \mid x \right)  \right) x 
 .\end{align*} 
-为了判别分类器好不好，我们有F1 score
+\subsection{逻辑回归应用}
+\noindent \textbf{在线广告点击率(CTR)估算}
+Feature engineering十分重要
+\begin{itemize}
+		\item One-Hot二进制编码 
+        \item 例如\verb|weekday=friday| 转化为一个七维向量。容易发现转化的高维向量极为稀疏。		
+\end{itemize}
+
+\section{支持向量机} 
+线性分类器本质上是划一个决策边界，但是考虑到数据噪声后，分类器很容易出错。
+我们发现边界与数据距离最大时是最
+robust的，也称之为最大间隔边界。
+
+我们的优化目标便是最短距离最大化。逻辑回归的打分函数$s=\theta^{T} x$，容易
+发现如果打分越高的样例越远离决策边界，分类器越可靠。
+
+\subsection{SVM最优化问题}
+假设
+\begin{itemize}
+		\item 标签$y \in \{-1,1\} $ 
+		\item $h\left( x \right) = g\left( w^{T}x + b \right) $ \footnote{g = sgn}
+\end{itemize}
+由高中知识我们知道，点到直线的距离即几何间隔为
 \[
-F_1 = \frac{2 \times \mathrm{Precision} \times \mathrm{Recall}  }{ \mathrm{Precision} + \mathrm{Recall}  }
+		\gamma^{(i)} = \frac{ \lvert w^{T}x^{(i)} + b   \rvert }{\|w\|^2}
+.\]
+不妨设$\|w\|^2 = 1$，且由于$y^{(i)}$ 的取值只为$\{-1,1\} $，上式可简化为
+\begin{equation}	
+		\gamma^{(i)} = y^{(i)} \left( w^{T}x^{(i)} + b \right) \label{eqn:1}
+.\end{equation}
+ 
+除此之外还可以通过简单的代数手段进行推导：
+\[
+		w^{T} \left( x^{(i)} - \gamma^{(i)} y^{(i)} \frac{w}{\|w\|} \right)  + b= 0
+.\] 
+解得
+\begin{equation}
+		\gamma^{(i)} = y^{(i)} \left[ \left( \frac{w}{\|w\|} \right) ^{T} x^{(i)} + \frac{b}{\|w\|} \right] \label{eqn:2}
+.\end{equation}
+容易发现\eqref{eqn:1}和\eqref{eqn:2}本质相同，从而最小几何间隔为
+\[
+		\hat{ \gamma} = \mathrm{min}_{i} \left( \gamma^{(1)},\ldots, \gamma^{(m)} \right) 
+.\] 
+等价于在
+\[
+		y^{(i)} \left( w^{T}x^{(i)}  + b \right) \ge  \hat{\gamma}
+.\] 
+时求$\max \gamma$，但是非凸目标函数不易求最值，所以需要进行转换。
+将函数间隔固定为1，即$\hat{\gamma} = 1$，目标函数转化为
+\[
+\min \frac{1}{2} \|w \|^2
+.\] 
+使得$y^{(i)} \left( w^{T}x^{(i)} + b \right)  \ge  1$
+
+\section{支持向量机优化} 
+\subsection{拉格朗日对偶问题}
+对于凸优化问题，可以使用拉格朗日乘数法。但是只能处理限制条件是等式的
+情况，为了处理不等式，我们需要引入松弛变量将其转化为等式，例如
+\[
+		g_{i}\left( w \right)  = 1 - y^{(i)} \left( w^{T}x^{(i)} + b \right)  \le  0
+.\] 
+$g_{i}\left( w \right) $ 即支持向量。
+这等价于存在$a_{i}$使得
+\[
+		g_{i}\left( w \right)  + a_{i}^2 = 0
+.\] 
+得到拉格朗日函数
+\[
+		\mathcal{L} \left( w,\lambda,a \right)  = 
+		f\left( w \right)  + \sum_{i=1}^{n} \lambda_{i} \left( g_{i}\left( w \right) + 
+		a_{i}^2 \right) 
+.\] 
+其中$f$ 即优化目标$\frac{1}{2} \|w\|^2 $由拉格朗日乘数法知
+\[
+\begin{cases}
+		\frac{\partial \mathcal{L}}{\partial w} = 0 \\ 
+		\lambda_{i} a_{i} = 0 \\
+		g_{i} \left( w \right)  + a_{i} ^2 = 0 \\ 
+		\lambda_{i} \ge 0
+\end{cases}
+.\] 
+对$\lambda_{i}a_{i} = 0$讨论，若$a_{i}=0$则$g_{i}\left( w \right) =0$，
+若$a_{i}\neq 0$ 则必有$\lambda_{i} = 0$。
+
+知$a_{i}$ 这个变量对我们求最值没有任何约束，我们可以用$\lambda_{i}g_{i}\left( w \right) 
+=0$ 来代替上式的条件。删去$a_{i}$ 即可得到\href{https://zhuanlan.zhihu.com/p/77750026}{KKT条件}，
+
+从而拉格朗日函数可以重写为
+\[
+		\mathcal{L}\left( w,\lambda \right) = f(w) + \sum_{i=1}^{n} \lambda_{i}g_{i}\left( w \right) 
+.\] 
+注意到$\mathcal{L} \le  f\left( w \right) $ ，当调整$\lambda$使得
+$\sum_{i=1}^{n} \lambda_{i}g_{i}\left( w \right) $大的时候，
+$f\left( w \right) $一定会更小，故我们的最优化问题等价于
+\[
+		\min_{w} \max_{\lambda} \mathcal{L} \left( w, \lambda \right) 
+.\] 
+\subsection{支持向量机优化求解} 
+可以证明KKT条件下有强对偶性
+\[
+\min \max f = \max \min f
+.\] 
+从而我们可以很容易求解之前的问题，先对$w$求偏导求出$\min_{w}f$，
+计算后可以知道问题转化为
+$
+\sum_{i=1}^{m} \lambda_{i} y^{i} = 0
+$
+时求解
+\[
+\max_{\lambda} \left[ \sum_{i=1}^{m} \lambda_{i} + 
+\frac{1}{2}\lambda_{i}\lambda_{j} y^{(i)} y^{(j)} \left( (x^{(i)})^{T}  x^{(j)} \right)    \right] 
 .\] 
 
 \end{document}
