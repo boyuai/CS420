@@ -1,98 +1,4 @@
-\input{../preamble.tex}
-\linespread{1.5} \selectfont
-\title{\textsc{Machine Learning Lecture Notes}}
-\begin{document}
-\maketitle
-\tableofcontents
 
-\input{week1}
-\input{week2}
-<<<<<<< HEAD
-\input{week3}
-
-\chapter{Mar 23}
-
-\section{支持向量机核方法} 
-之前提到过，对$x$ 进行一个$\phi$ 映射可以处理一些非线性问题。而
-\[
-		K\left( x^{(i)},x^{(j)} \right)  = \phi\left( x^{(i)} \right) ^{T} \phi \left( x^{(j)} \right) 
-.\] 
-我们期望$x^{(i)},x^{(j)}$越接近，对应$K$函数越大。
-\noindent \textbf{Kernel Trick}是说 
-我们甚至可以不管$\phi$ 直接定义$K$ 函数。
-
-核函数实际上是一个similarity measure, 最常用的核函数是高斯核函数
-\[
-		K\left( x,z \right)  = \exp\left( - \frac{\|x-z\|^2}{2\sigma^2} \right) 
-.\] 
-也称为径向基函数(RBF)核，$\phi$ 很复杂并且不重要，所以无需写出。
-
-\textbf{核矩阵}有着很好的性质：
-\begin{thm}
-核矩阵是对称矩阵和半正定矩阵。	
-\end{thm}
-
-\noindent \textbf{有效核}
-\begin{defi}
-		给定$K:\R^{n}\times \R^{n} \to \R$,如果任意$\{x_1,\ldots,x_n\} $ 对应的核矩阵是
-		半正定矩阵，那么这个核是有效核（Valid Kernel\footnote{也叫Mercy Kernel}）。
-\end{defi}
-大部分常用核都是有效核。还有一种特殊的核叫做 \textbf{sigmoid 核}：
-\[
-		K\left( x,z \right)  = \mathrm{tanh} \left( \alpha x^{T}z + c \right) 
-.\] 
-可以将它看成一个两层的神经网络。
-
-支持向量机可以看成一个广义的线性模型，基于统计的机器学习的本质思维方式是看两个
-数据的相似度！
-
-\section{人工神经网络}
-\subsection{感知机模型}
-Rosenblatt在1958年提出单层感知机的监督学习。考虑预测
-\[
-		\hat{y} = \phi\left( \sum_{i=1}^{m} w_ix_i + b\right) 
-.\] 
-其中$\phi$为激活函数。训练时使用如下方法更新
- \[
-		 w_{i} = w_{i} + \eta\left( y-\hat{y} \right) x_{i}, \quad b = b + \eta\left( y-\hat{y} \right) 
-.\] 
-这其实就是现在梯度下降的雏形。Rosenblatt还证明了这个算法在线性可分数据
-上的收敛性。但是1969年时，Minsky又证明了这种机器学习的方法甚至不能解决
-一些基本的问题，比如异或。由于缺少有效的算法，人们离开神经网络范式20年。
-
-\subsection{隐藏层和反向传播}
-到了1986年，人们提出添加隐藏层去学习线性不可分的数据。但是隐藏层的添加方法
-并不唯一，于是又有了\textbf{feed foward}的神经网络
-\begin{defi}
-		前馈神经网络，即消息从输入节点出发，经过隐藏
-		节点传到输出节点，且网络中没有或者循环。
-\end{defi}
-多层的神经网络一定会有非线性的激活函数，常用的激活函数有
-\begin{itemize}
-		\item Sigmoid函数
-				\[
-						\sigma\left( z \right)  = \frac{1}{1+e^{-z}}
-				.\] 
-		\item tanh
-				\[
-						\tanh\left( x \right) =\frac{1-e^{2z}}{1+e^{2z}}
-				.\] 
-		\item Rectified linear unit 
-				\[
-						ReLU\left( z \right)  = \max\left( 0,z \right) 
-				.\] 
-\end{itemize}
-\subsection{普适逼近定理}
-下面这个定理揭示了为什么神经网络能过如此有效
-\begin{thm}
-	一个具有至少一层隐藏层的前馈神经网络，并且隐藏层包含有限数量的神经元，
-	他可以以任意精度逼近定义在$\R^{n}$ 的闭集里的连续函数。（前提是这个
-	神经网络的激活函数满足某些性质，如relu,sigmoid）
-\end{thm}
-\subsection{反向传播算法}
-反向传播算法于1986年提出，而现在还在广泛使用。反向传播算法的本质
-就是函数求导的链式法则。具体推导见\href{https://zh.wikipedia.org/wiki/%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD%E7%AE%97%E6%B3%95}{wiki}。
-=======
 \chapter{March 16}
 \section{逻辑回归} 
 概率判别模型在分类时往往更加可靠，因为如果用函数的话就无法求导了。
@@ -249,13 +155,14 @@ $f\left( w \right) $一定会更小，故我们的最优化问题等价于
 \[
 		\min_{w} \max_{\lambda} \mathcal{L} \left( w, \lambda \right) 
 .\] 
-\subsection{支持向量机优化求解} 
 可以证明KKT条件下有强对偶性
 \[
 \min \max f = \max \min f
 .\] 
-从而我们可以很容易求解之前的问题，先对$w$求偏导求出$\min_{w}f$，
-计算后可以知道问题转化为
+%下面考虑取等的情况，即$$
+在svm中$\lambda  = 0$ 是没用的点，$\lambda > 0$ 则说明$g_{i}=0$ 即这个点刚好在最优边界上。
+\subsection{支持向量机优化求解} 
+由强对偶性，可以很容易求解之前的问题，先对$w$求偏导，可以知道问题转化为
 $
 \sum_{i=1}^{m} \lambda_{i} y^{i} = 0
 $
@@ -264,7 +171,35 @@ $
 \max_{\lambda} \left[ \sum_{i=1}^{m} \lambda_{i} + 
 \frac{1}{2}\lambda_{i}\lambda_{j} y^{(i)} y^{(j)} \left( (x^{(i)})^{T}  x^{(j)} \right)    \right] 
 .\] 
+可以使用序列最小优化(Sequential Minimization Optimization) 来求解
+求解到$\lambda$之后可以直接求解$w,b$. 
 
->>>>>>> a3b6c32a4462dae64cde1b4009039ebb8d5d8600
-\end{document}
+\noindent \textbf{线性不可分情况}：\\
+应用场景中，数据往往\textbf{线性不可分}。在SVM中我们一般加入松弛变量$\xi$ (但需要注意的是
+引入松弛变量只能解决噪声问题，如果真的不可分则需采用核方法)
+\[
+		y^{(i)}\left( w^{T}x^{(i)} + b \right) \ge 1 - \xi_{i}, \quad \xi_{1} \ge  0
+.\] 
+而拉格朗日函数也会相应的改变。我们要求$\lambda_{i} \le  C$.
+\noindent \textbf{损失函数对比}:\\
+我们称SVM的损失函数为Hinge Loss:
+\[
+		\frac{1}{2} \|w\|^2 + C \sum_{i=1}^{m} \max\left( 0, 1- y^{(i)}\left( w^{T}x^{(i)}+b \right)  \right) 
+.\] 
+它与logistic loss的区别在于只要支持向量大于一了，就没有相关的loss了。
+\subsection{SMO算法}
+SMO的思想也叫坐标上升法（Coordinate Ascent），与梯度下降的区别在于$SMO$每次优化会固定部分坐标，只优化一个维度。
+考虑到$\lambda_i$之间是互相有约束的
+\[
+\sum_{i=1}^{m} \lambda_{i} y^{i} = 0
+.\] 
+我们选取两个变量$\lambda_i, \lambda_j$进行更新，对$W\left( \lambda \right) $ 进行优化。
+例如$i=1,j=2$。其他变量为常数，我们的约束变为
+\[
+\lambda_1 y^{(i)} + \lambda_2 y^{(2)} =-\sum_{i=3}^{m} \lambda_{i}y^{(i)} = \zeta  
+.\] 
 
+最后的优化变成一个二次函数
+ \[
+		 W\left( \lambda_2 \right)  = a \lambda_2^2 + b \lambda + c  
+.\] 
